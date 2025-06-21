@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  node1:
+    build: .
+    container_name: node1
+    ports:
+      - "8001:8000"
+    environment:
+      NODE_ID: node1
+      # NODE_PORT is set to the internal container port 8000
+      NODE_PORT: 8000
+      ALL_NODES: '{"node1":"http://node1:8000", "node2":"http://node2:8000", "node3":"http://node3:8000"}'
+    # Ensure command arguments are correctly parsed.
+    # We explicitly convert NODE_PORT to string here, though Python's int() will handle it.
+    # The crucial part is making sure the values are not empty strings.
+    command: ["python", "src/node.py", "node1", "8000", '{"node1":"http://node1:8000", "node2":"http://node2:8000", "node3":"http://node3:8000"}']
+
+  node2:
+    build: .
+    container_name: node2
+    ports:
+      - "8002:8000"
+    environment:
+      NODE_ID: node2
+      NODE_PORT: 8000
+      ALL_NODES: '{"node1":"http://node1:8000", "node2":"http://node2:8000", "node3":"http://node3:8000"}'
+    command: ["python", "src/node.py", "node2", "8000", '{"node1":"http://node1:8000", "node2":"http://node2:8000", "node3":"http://node3:8000"}']
+
+  node3:
+    build: .
+    container_name: node3
+    ports:
+      - "8003:8000"
+    environment:
+      NODE_ID: node3
+      NODE_PORT: 8000
+      ALL_NODES: '{"node1":"http://node1:8000", "node2":"http://node2:8000", "node3":"http://node3:8000"}'
+    command: ["python", "src/node.py", "node3", "8000", '{"node1":"http://node1:8000", "node2":"http://node2:8000", "node3":"http://node3:8000"}']
